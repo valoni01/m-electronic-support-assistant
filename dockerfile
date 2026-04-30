@@ -10,6 +10,4 @@ RUN uv sync --frozen --no-dev
 
 COPY . .
 
-EXPOSE 7860
-
 CMD ["sh", "-c", "uv run uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-7860}"]
