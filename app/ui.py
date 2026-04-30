@@ -4,7 +4,14 @@ from app.services.chat_service import ChatService
 chat_service = ChatService()
 
 
-async def chat(user_message, history):
+async def chat(user_message, history, session_state):
+    if session_state is None:
+        session_state = {
+            "is_authenticated": False,
+            "customer_id": None,
+            "customer_email": None,
+        }
+
     formatted_history = []
 
     for user, assistant in history:
@@ -15,34 +22,51 @@ async def chat(user_message, history):
             }
         )
 
-    response = await chat_service.respond(user_message, formatted_history)
+    response, updated_state = await chat_service.respond(
+        user_message=user_message,
+        history=formatted_history,
+        session_state=session_state,
+    )
 
-    return response
+    return response, updated_state
 
 
 def build_ui():
     with gr.Blocks(title="Meridian Electronics Support Assistant") as mui:
+        session_state = gr.State(
+            {
+                "is_authenticated": False,
+                "customer_id": None,
+                "customer_email": None,
+            }
+        )
+
         gr.Markdown(
             """
             # Meridian Electronics Support Assistant
 
-            Ask about product availability, order history, or placing an order.
+            Ask about product availability, product details, order history, or placing an order.
             """
         )
 
+        chatbot = gr.Chatbot(height=500)
+
         gr.ChatInterface(
             fn=chat,
-            chatbot=gr.Chatbot(height=500),
+            chatbot=chatbot,
+            additional_inputs=[session_state],
+            additional_outputs=[session_state],
             textbox=gr.Textbox(
-                placeholder="Ask about a product, order, or account...",
+                placeholder="Ask about products, orders, or your account...",
                 container=False,
                 scale=7,
             ),
             examples=[
-                "Do you have wireless keyboards in stock?",
-                "Can you help me check my order status?",
-                "I want to place an order for a monitor.",
-                "Can you look up my previous orders?",
+                "Show me active monitors",
+                "Search for wireless keyboards",
+                "Tell me about SKU MON-0054",
+                "I want to check my order history",
+                "I want to place an order",
             ],
         )
 
