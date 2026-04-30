@@ -2,7 +2,7 @@ import time
 from typing import Any, Dict, List
 
 from mcp import ClientSession
-from mcp.client.streamable_http import streamablehttp_client
+from mcp.client.streamable_http import streamable_http_client
 
 from app.config import settings
 from app.observability.logging import get_logger
@@ -26,7 +26,7 @@ class MCPService:
         logger.info("mcp_list_tools_started")
 
         try:
-            async with streamablehttp_client(self.server_url) as (read, write, _):
+            async with streamable_http_client(self.server_url) as (read, write, _):
                 async with ClientSession(read, write) as session:
                     await session.initialize()
                     tools_response = await session.list_tools()
@@ -73,7 +73,7 @@ class MCPService:
         )
 
         try:
-            async with streamablehttp_client(self.server_url) as (read, write, _):
+            async with streamable_http_client(self.server_url) as (read, write, _):
                 async with ClientSession(read, write) as session:
                     await session.initialize()
 
@@ -122,10 +122,18 @@ class MCPService:
 
         redacted = dict(arguments)
 
-        sensitive_keys = {"pin", "password", "token", "api_key"}
+         sensitive_keys = {
+        "pin",
+        "email",
+        "password",
+        "token",
+        "api_key",
+        "customer_email",
+    }}
 
         for key in sensitive_keys:
             if key in redacted:
                 redacted[key] = "***REDACTED***"
 
         return redacted
+
