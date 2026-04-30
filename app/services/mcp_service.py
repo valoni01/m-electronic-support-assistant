@@ -122,14 +122,7 @@ class MCPService:
 
         redacted = dict(arguments)
 
-         sensitive_keys = {
-        "pin",
-        "email",
-        "password",
-        "token",
-        "api_key",
-        "customer_email",
-    }}
+        sensitive_keys = {"pin", "password", "token", "api_key"}
 
         for key in sensitive_keys:
             if key in redacted:
