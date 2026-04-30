@@ -1,12 +1,3 @@
----
-title: Meridian Electronics Support Chatbot
-emoji: 💬
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 7860
----
-
 # Meridian Electronics Support Chatbot
 
 A small prototype of a customer support chatbot for Meridian Electronics.
